@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { Products } from '../../Context/ProductProvider'
 import { getItems, getItemsAsync } from '../../Services/getItems'
 import { ItemList } from '../ItemList'
 
 export const ItemListContainer = () => {
 
+    const {globalProducts} = useContext(Products);
     const [products, setProducts] = useState([]); 
 
     useEffect( ()=> {
@@ -24,10 +26,10 @@ export const ItemListContainer = () => {
     return (
         <>
             {
-                products.length === 0 ?
+                globalProducts.length === 0 ?
                 <h1> Loading ... </h1>
                 :
-                <ItemList products = {products}/>
+                <ItemList products = {globalProducts}/>
             }
         </>
     )

@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { createContext } from "react";
+import { db } from '../Firebase/config';
+import { getDocs, collection } from 'firebase/firestore/lite';
 
 export const Products = createContext();
 
 export const ProductProvider = ({children}) => {
 
+
     const [cantidad, setCantidad] = useState (0);
+    const [globalProducts, setGlobalProducts] = useState([])
+
     //EJEMPLO SI TUVIERAMOS CART
     // const [cart, setCart] = useState([])
 
@@ -14,6 +19,21 @@ export const ProductProvider = ({children}) => {
     }
 
     useEffect(()=> {
+        
+        //FUNCION IIFE AUTOINVOCADA
+        ( async()=> {
+            const products = collection(db, 'products');
+
+            const querySnapshot = await getDocs(products);
+
+            console.log(querySnapshot);
+            const aux = [];
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} => ${doc.data()}`);
+                aux.push({id: doc.id, ...doc.data() })
+            });
+            setGlobalProducts(aux);
+        })()
 
     }, [])
 
@@ -42,7 +62,7 @@ export const ProductProvider = ({children}) => {
 
     return (
         <Products.Provider value = {{
-            onAdd, cantidad
+            onAdd, cantidad, globalProducts
         }}>
             {children}
         </Products.Provider>
